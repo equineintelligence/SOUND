@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { supabase } from '@/api/supabaseClient';
 
@@ -10,18 +10,24 @@ export const AuthProvider = ({ children }) => {
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [authError, setAuthError] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const userIdRef = useRef(null);
 
-  const checkUserAuth = useCallback(async () => {
-    setIsLoadingAuth(true);
+  // `silent` refreshes the user without showing the full-page spinner. The
+  // spinner replaces the whole page, so showing it after the first load would
+  // wipe any half-filled form.
+  const checkUserAuth = useCallback(async ({ silent = false } = {}) => {
+    if (!silent) setIsLoadingAuth(true);
     try {
       const currentUser = await base44.auth.me();
+      userIdRef.current = currentUser.id;
       setUser(currentUser);
       setIsAuthenticated(true);
     } catch (error) {
+      userIdRef.current = null;
       setUser(null);
       setIsAuthenticated(false);
     } finally {
-      setIsLoadingAuth(false);
+      if (!silent) setIsLoadingAuth(false);
       setAuthChecked(true);
     }
   }, []);
@@ -30,10 +36,17 @@ export const AuthProvider = ({ children }) => {
     // getSession waits for Supabase to finish any sign-in that came back in the
     // URL (Google sign-in, email confirmation or password-reset links).
     checkUserAuth();
-    const { data } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      // Supabase re-announces SIGNED_IN whenever the tab regains focus. Only
+      // react when the signed-in person actually changes.
+      const nextId = session?.user?.id || null;
+      if (event === 'SIGNED_OUT') {
+        if (userIdRef.current) setTimeout(() => checkUserAuth({ silent: true }), 0);
+        return;
+      }
+      if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && nextId !== userIdRef.current) {
         // Run outside the auth callback, as Supabase recommends.
-        setTimeout(checkUserAuth, 0);
+        setTimeout(() => checkUserAuth({ silent: true }), 0);
       }
     });
     return () => data.subscription.unsubscribe();
