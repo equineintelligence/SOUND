@@ -1,6 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
-const url = import.meta.env.VITE_SUPABASE_URL;
+// Keep only the https://<project>.supabase.co part, in case the address was
+// copied with an extra path such as /rest/v1/ on the end.
+const rawUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
+const url = rawUrl ? new URL(rawUrl).origin : '';
 const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!url || !anonKey) {
