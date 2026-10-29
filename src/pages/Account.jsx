@@ -14,15 +14,20 @@ export default function Account() {
   useEffect(() => {
     let active = true;
     (async () => {
-      const me = await base44.auth.me();
-      if (!active) return;
-      setUser(me || null);
-      if (me) {
-        const owned = await base44.entities.Business.filter({ claimed_by: me.id }, { limit: 1 });
+      try {
+        const me = await base44.auth.me();
         if (!active) return;
-        setBusiness((owned.items || [])[0] || null);
+        setUser(me || null);
+        if (me) {
+          const owned = await base44.entities.Business.filter({ claimed_by: me.id }, { limit: 1 });
+          if (!active) return;
+          setBusiness((owned.items || [])[0] || null);
+        }
+      } catch (err) {
+        console.error('Could not load your account', err);
+      } finally {
+        if (active) setLoading(false);
       }
-      setLoading(false);
     })();
     return () => {
       active = false;

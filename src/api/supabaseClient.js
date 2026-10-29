@@ -20,5 +20,9 @@ export const supabase = createClient(url || 'http://localhost', anonKey || 'miss
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
+    // Supabase's default cross-tab lock can stall every request when Sound is
+    // open in several tabs (for example after clicking the email confirmation
+    // link). A simple in-tab lock avoids that.
+    lock: async (_name, _acquireTimeout, fn) => fn(),
   },
 });
