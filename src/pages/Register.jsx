@@ -13,6 +13,7 @@ import GoogleIcon from "@/components/GoogleIcon";
 const GOOGLE_ENABLED = import.meta.env.VITE_ENABLE_GOOGLE === "true";
 import { toast } from "@/components/ui/use-toast";
 import { safeReturnTo } from "@/lib/authReturnTo";
+import { appUrl } from "@/lib/basePath";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -31,7 +32,11 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      await base44.auth.register({ email, password });
+      const result = await base44.auth.register({ email, password });
+      if (result?.signedIn) {
+        window.location.href = appUrl(safeReturnTo());
+        return;
+      }
       setShowOtp(true);
     } catch (err) {
       setError(err.message || "Registration failed");

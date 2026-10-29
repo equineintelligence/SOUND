@@ -217,7 +217,7 @@ const auth = {
   },
 
   async register({ email, password, full_name }) {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -226,7 +226,9 @@ const auth = {
       },
     });
     if (error) fail(error);
-    return { ok: true };
+    // When "Confirm email" is switched off in Supabase, the new member is
+    // signed in straight away.
+    return { ok: true, signedIn: Boolean(data?.session) };
   },
 
   async verifyOtp({ email, otpCode }) {
