@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Sparkles, MessageCircle, Loader2, Info } from 'lucide-react';
+import { Sparkles, MessageCircle, Loader2, Info, SquarePen } from 'lucide-react';
 import { AI_TOOLS } from '@/lib/aiTools';
-import { loadBotpress, openBotpress, closeBotpress } from '@/lib/botpress';
+import { loadBotpress, openBotpress, closeBotpress, newBotpressConversation } from '@/lib/botpress';
 
 export default function AiTools() {
   const [busyId, setBusyId] = useState(null);
@@ -10,13 +10,14 @@ export default function AiTools() {
   // Leaving the page closes any open chat.
   useEffect(() => () => closeBotpress(), []);
 
-  const openTool = async (tool) => {
+  const openTool = async (tool, fresh = false) => {
     setError('');
-    setBusyId(tool.id);
+    setBusyId(fresh ? `${tool.id}:new` : tool.id);
     try {
       if (tool.kind === 'botpress') {
         await loadBotpress(tool);
-        openBotpress();
+        if (fresh) await newBotpressConversation();
+        else openBotpress();
       }
     } catch (err) {
       setError(err.message || 'That tool could not be opened. Please try again.');
@@ -54,19 +55,34 @@ export default function AiTools() {
               </div>
             </div>
             <p className="mt-3 text-[14px] leading-relaxed text-ink">{tool.description}</p>
-            <button
-              type="button"
-              onClick={() => openTool(tool)}
-              disabled={busyId === tool.id}
-              className="mt-4 inline-flex min-h-[48px] items-center gap-2 rounded-2xl bg-brand px-5 text-[14px] font-semibold text-white transition-opacity duration-200 hover:opacity-90 disabled:opacity-60"
-            >
-              {busyId === tool.id ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <MessageCircle className="h-4 w-4" strokeWidth={2} />
-              )}
-              {busyId === tool.id ? 'Opening…' : 'Start a chat'}
-            </button>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => openTool(tool)}
+                disabled={Boolean(busyId)}
+                className="inline-flex min-h-[48px] items-center gap-2 rounded-2xl bg-brand px-5 text-[14px] font-semibold text-white transition-opacity duration-200 hover:opacity-90 disabled:opacity-60"
+              >
+                {busyId === tool.id ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <MessageCircle className="h-4 w-4" strokeWidth={2} />
+                )}
+                {busyId === tool.id ? 'Opening…' : 'Open chat'}
+              </button>
+              <button
+                type="button"
+                onClick={() => openTool(tool, true)}
+                disabled={Boolean(busyId)}
+                className="inline-flex min-h-[48px] items-center gap-2 rounded-2xl border border-hairline bg-white px-5 text-[14px] font-semibold text-ink transition-colors duration-200 hover:bg-surface disabled:opacity-60"
+              >
+                {busyId === `${tool.id}:new` ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <SquarePen className="h-4 w-4" strokeWidth={2} />
+                )}
+                {busyId === `${tool.id}:new` ? 'Starting…' : 'New chat'}
+              </button>
+            </div>
             {tool.note && (
               <p className="mt-3 flex gap-2 text-[12px] leading-relaxed text-ink-soft">
                 <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2} />
