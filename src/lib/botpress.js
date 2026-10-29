@@ -1,8 +1,13 @@
-// Loads a Botpress webchat once, and lets the AI Tools page open it and hide
-// it again when the member leaves the page.
+// Loads a Botpress webchat once and opens it from the AI Tools page.
+//
+// Botpress normally shows a floating chat bubble on every page. Sound hides
+// that bubble (so it never covers the bottom tabs) and opens the chat from the
+// "Start a chat" button instead. Leaving the AI Tools page closes the chat.
 
 let loading = null;
 let loadedFor = null;
+
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -10,26 +15,49 @@ function loadScript(src) {
     el.src = src;
     el.async = false;
     el.onload = resolve;
-    el.onerror = () => reject(new Error(`Could not load ${src}`));
+    el.onerror = () => reject(new Error('The assistant could not be loaded. Check your connection and try again.'));
     document.head.appendChild(el);
   });
+}
+
+// The widget lives in a shadow root under #fab-root; page CSS can't reach it,
+// so the rule that hides the bubble is added inside it.
+async function hideBubble() {
+  for (let i = 0; i < 100; i += 1) {
+    const root = document.getElementById('fab-root')?.shadowRoot;
+    if (root) {
+      if (!root.querySelector('style[data-sound]')) {
+        const style = document.createElement('style');
+        style.setAttribute('data-sound', '');
+        style.textContent = '.bpFab { display: none !important; }';
+        root.appendChild(style);
+      }
+      return;
+    }
+    await wait(100);
+  }
 }
 
 export function loadBotpress(tool) {
   if (loading && loadedFor === tool.id) return loading;
   if (loading) {
-    // A different bot is already on the page; a reload is the clean way to switch.
     return Promise.reject(new Error('Another assistant is already open. Refresh the page to switch.'));
   }
   loadedFor = tool.id;
   loading = (async () => {
     const [inject, ...rest] = tool.scripts;
     await loadScript(inject);
+    const ready = new Promise((resolve) => {
+      try {
+        window.botpress.on('webchat:initialized', resolve);
+      } catch {
+        resolve();
+      }
+      setTimeout(resolve, 10000);
+    });
     for (const src of rest) await loadScript(src);
-    // Give the widget a moment to start.
-    for (let i = 0; i < 50 && !document.querySelector('.bpChatContainer'); i += 1) {
-      await new Promise((r) => setTimeout(r, 100));
-    }
+    await ready;
+    await hideBubble();
   })().catch((err) => {
     loading = null;
     loadedFor = null;
@@ -42,14 +70,10 @@ export function openBotpress() {
   window.botpress?.open?.();
 }
 
-// Show the chat only on the AI Tools page (see .ai-tools-active in index.css).
-export function setBotpressVisible(visible) {
-  document.body.classList.toggle('ai-tools-active', visible);
-  if (!visible) {
-    try {
-      window.botpress?.close?.();
-    } catch {
-      /* the widget may not be ready yet */
-    }
+export function closeBotpress() {
+  try {
+    window.botpress?.close?.();
+  } catch {
+    /* the widget may not be ready yet */
   }
 }

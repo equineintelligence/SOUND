@@ -1,17 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Sparkles, MessageCircle, Loader2, Info } from 'lucide-react';
 import { AI_TOOLS } from '@/lib/aiTools';
-import { loadBotpress, openBotpress, setBotpressVisible } from '@/lib/botpress';
+import { loadBotpress, openBotpress, closeBotpress } from '@/lib/botpress';
 
 export default function AiTools() {
   const [busyId, setBusyId] = useState(null);
   const [error, setError] = useState('');
 
-  // The chat window is only shown while this page is open.
-  useEffect(() => {
-    setBotpressVisible(true);
-    return () => setBotpressVisible(false);
-  }, []);
+  // Leaving the page closes any open chat.
+  useEffect(() => () => closeBotpress(), []);
 
   const openTool = async (tool) => {
     setError('');
