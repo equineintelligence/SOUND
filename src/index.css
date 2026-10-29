@@ -69,3 +69,8 @@
   .tap { min-height: 44px; min-width: 44px; }
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 }
+/* Botpress webchat (AI Tools): hidden everywhere except the AI Tools page, and
+   opened from the page's own button rather than a floating bubble. */
+.bpChatContainer { display: none; }
+body.ai-tools-active .bpChatContainer { display: block; }
+.bpChatContainer #fab-root { display: none !important; }

@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { Compass, PenLine, ClipboardList, User, Home, BookOpen } from 'lucide-react';
+import { Compass, PenLine, ClipboardList, User, Home, BookOpen, Sparkles } from 'lucide-react';
 import SoundLogo from '@/components/SoundLogo';
 import TabBar from '@/components/TabBar';
 import SoundFooter from '@/components/SoundFooter';
@@ -8,8 +8,9 @@ const TABS = [
   { label: 'Discover', to: '/', icon: Compass },
   { label: 'My Yard', to: '/my-yard', icon: Home },
   { label: 'Learn', to: '/training', icon: BookOpen },
+  { label: 'AI Tools', to: '/ai-tools', icon: Sparkles },
   { label: 'Write', to: '/write', icon: PenLine },
-  { label: 'My reviews', to: '/my-reviews', icon: ClipboardList },
+  { label: 'Reviews', to: '/my-reviews', icon: ClipboardList },
   { label: 'Account', to: '/account', icon: User },
 ];
 
