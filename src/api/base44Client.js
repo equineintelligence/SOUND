@@ -293,14 +293,22 @@ const integrations = {
     async UploadFile({ file }) {
       return integrations.Core.UploadPublicFile({ file });
     },
-    async UploadPrivateFile({ file }) {
-      const path = await upload(PRIVATE_BUCKET, file);
+    // `bucket` is optional; the Resource Library uses its own "library-files" bucket.
+    async UploadPrivateFile({ file, bucket = PRIVATE_BUCKET }) {
+      const path = await upload(bucket, file);
       return { file_uri: path };
     },
-    async CreateFileSignedUrl({ file_uri, expires_in = 300 }) {
-      const { data, error } = await supabase.storage.from(PRIVATE_BUCKET).createSignedUrl(file_uri, expires_in);
+    async CreateFileSignedUrl({ file_uri, expires_in = 300, bucket = PRIVATE_BUCKET, download }) {
+      const { data, error } = await supabase.storage
+        .from(bucket)
+        .createSignedUrl(file_uri, expires_in, download ? { download } : undefined);
       if (error) fail(error);
       return { signed_url: data.signedUrl };
+    },
+    async DeleteFile({ file_uri, bucket = PRIVATE_BUCKET }) {
+      const { error } = await supabase.storage.from(bucket).remove([file_uri]);
+      if (error) fail(error);
+      return { ok: true };
     },
   },
 };

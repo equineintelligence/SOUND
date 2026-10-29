@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Sparkles, MessageCircle, Loader2, Info, SquarePen } from 'lucide-react';
 import { AI_TOOLS } from '@/lib/aiTools';
+import useAccess from '@/hooks/useAccess';
+import UpgradeNotice from '@/components/upgrade/UpgradeNotice';
 import { loadBotpress, openBotpress, closeBotpress, newBotpressConversation } from '@/lib/botpress';
 
 export default function AiTools() {
+  const access = useAccess();
   const [busyId, setBusyId] = useState(null);
   const [error, setError] = useState('');
 
@@ -36,12 +39,23 @@ export default function AiTools() {
         </p>
       </div>
 
+      {access.loading && <p className="text-[14px] text-ink-soft">Checking your plan…</p>}
+
+      {!access.loading && !access.canUseAiTools && (
+        <UpgradeNotice
+          plan="pro"
+          title="AI Tools are part of Pro"
+          text="Upgrade to Pro to chat with every Sound AI assistant, starting with the SAEF Rules Guide. Reviews stay free on every plan."
+        />
+      )}
+
       {error && (
         <p className="rounded-2xl border border-hairline bg-white px-4 py-3 text-[13px] text-destructive">
           {error}
         </p>
       )}
 
+      {!access.loading && access.canUseAiTools && (
       <div className="space-y-3">
         {AI_TOOLS.map((tool) => (
           <section key={tool.id} className="rounded-2xl border border-hairline bg-white p-5">
@@ -92,6 +106,7 @@ export default function AiTools() {
           </section>
         ))}
       </div>
+      )}
     </div>
   );
 }

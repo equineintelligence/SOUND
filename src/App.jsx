@@ -45,6 +45,7 @@ import TrainingLibrary from '@/pages/TrainingLibrary';
 import TrainingDetail from '@/pages/TrainingDetail';
 import Invoice from '@/pages/Invoice';
 import AiTools from '@/pages/AiTools';
+import ResourceLibrary from '@/pages/ResourceLibrary';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -105,6 +106,7 @@ const AuthenticatedApp = () => {
           <Route path="/training/:id" element={<TrainingDetail />} />
           <Route path="/invoice/:id" element={<Invoice />} />
           <Route path="/ai-tools" element={<AiTools />} />
+          <Route path="/library" element={<ResourceLibrary />} />
         </Route>
         <Route element={<BusinessLayout />}>
           <Route path="/business" element={<BusinessHome />} />

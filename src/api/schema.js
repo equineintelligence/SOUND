@@ -196,5 +196,20 @@ export const ENTITIES = {
       "invoice_due": "string",
       "admin_note": "string"
     }
+  },
+  "LibraryDocument": {
+    "table": "library_documents",
+    "fields": {
+      "title": "string",
+      "category": "string",
+      "description": "string",
+      "audience": "enum",
+      "file_uri": "string",
+      "file_name": "string",
+      "file_type": "string",
+      "file_size": "number",
+      "version": "string"
+    }
   }
+
 };

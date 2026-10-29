@@ -25,6 +25,7 @@ export default function useAccess() {
   }, [load]);
 
   const isAdmin = user?.role === 'admin';
+  const membershipActive = Boolean(membership) && (membership.status || 'active') === 'active';
   const plan = isAdmin ? 'admin' : membership?.plan === 'pro' ? 'pro' : 'free';
 
   return {
@@ -34,6 +35,11 @@ export default function useAccess() {
     isAdmin,
     plan,
     canLearn: plan === 'pro' || plan === 'admin',
+    // AI Tools: paying Pro members and admins.
+    canUseAiTools: isAdmin || (plan === 'pro' && membershipActive),
+    // Resource Library downloads: paying Pro or Business members, and admins.
+    canDownloadLibrary:
+      isAdmin || (membershipActive && (plan === 'pro' || Boolean(membership?.business_membership))),
     horseLimit: horseLimit(plan),
     businessActive: isAdmin || Boolean(membership?.business_membership),
     refresh: load,
