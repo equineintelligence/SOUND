@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 95%;
+    --foreground: 144 9% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 144 9% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 144 9% 11%;
+    --primary: 156 44% 21%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 100 15% 95%;
+    --secondary-foreground: 144 9% 11%;
+    --muted: 100 15% 95%;
+    --muted-foreground: 144 5% 39%;
+    --accent: 132 17% 94%;
+    --accent-foreground: 156 44% 21%;
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 96 9% 89%;
+    --input: 96 9% 89%;
+    --ring: 156 44% 21%;
+    --radius: 1rem;
+    --font-heading: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    letter-spacing: -0.005em;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-heading;
+    letter-spacing: -0.02em;
+  }
+
+  button, a, input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .tap { min-height: 44px; min-width: 44px; }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+}

@@ -1,0 +1,32 @@
+# Monthly Rosette Check: recalculates ratings and rosettes, then applies the
+# review retention schedule. Runs at 06:00 South African time on the 1st of
+# every month (04:00 UTC). You can also run it by hand from the Actions tab.
+#
+# Needs repository secrets (Settings → Secrets and variables → Actions → Secrets):
+#   SUPABASE_URL               your Supabase project URL
+#   SUPABASE_SERVICE_ROLE_KEY  your Supabase service_role / secret key (keep private)
+
+name: Monthly Rosette Check
+
+on:
+  schedule:
+    - cron: '0 4 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node scripts/monthly-check.mjs
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

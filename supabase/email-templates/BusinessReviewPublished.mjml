@@ -1,0 +1,46 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{business_name}} has a new review on Sound</mj-title>
+    <mj-preview>A customer has reviewed {{business_name}}. You can reply once your review is live.</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="Arial, Helvetica, sans-serif" />
+      <mj-text color="#000000" font-size="15px" line-height="1.6" padding="0" />
+      <mj-button background-color="#000000" color="#ffffff" border-radius="4px" font-weight="700" inner-padding="14px 28px" align="left" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#f6f7f9">
+    <mj-section background-color="#111111" padding="20px 36px">
+      <mj-column>
+        <mj-text color="#ffffff" font-size="17px" font-weight="700">Sound</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#ffffff" padding="36px 36px 8px">
+      <mj-column>
+        <mj-text font-size="26px" font-weight="700" line-height="1.25">A new review is on your Sound profile</mj-text>
+        <mj-text color="#6b7280" font-size="15px" padding="10px 0 0">A verified customer has reviewed {{business_name}}{{area}}. It is published on your public profile and you can reply to it.</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#ffffff" padding="24px 36px 8px">
+      <mj-column>
+        <mj-text font-weight="700" font-size="15px">What you can do</mj-text>
+        <mj-text padding="8px 0 0">Reply once, publicly, beneath the review. Your reply is checked before it appears.</mj-text>
+        <mj-text padding="8px 0 0">Flag a policy breach, such as the review naming a private individual or using abusive language.</mj-text>
+        <mj-text padding="8px 0 0">Dispute a specific factual claim. A moderator will ask the customer to support it. We never share the customer's identity or their documents with you.</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#ffffff" padding="24px 36px 36px">
+      <mj-column>
+        <mj-button href="{{cta_url}}">Open your business dashboard</mj-button>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#f6f7f9" padding="24px 36px 36px">
+      <mj-column>
+        <mj-text color="#6b7280" font-size="12px" line-height="1.6">You are listed on Sound because you offer equestrian services to the public. This notice explains what is shown about you and how to reply, flag or dispute a review, as required by the Protection of Personal Information Act. Your profile is free and a listing never gives control over reviews or ratings.</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
